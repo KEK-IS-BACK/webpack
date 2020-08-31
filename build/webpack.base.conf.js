@@ -3,7 +3,6 @@ const fs = require('fs')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const PATHS = {
   src: path.join(__dirname, '../src'),
@@ -27,42 +26,20 @@ module.exports = {
     publicPath: '/'
   },
   module: {
-    rules: [
-      //FONTS
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]'
-        }
-      },
+    rules: [{
+      //PUG
+        test: /\.pug$/,
+        loader: 'pug-loader'
+      }, {
       //JS
-      {
         test: /\.js$/,
         loader: 'babel-loader',
         options: {
           presets: ['@babel/preset-env']
         },
         exclude: '/node_modules/',
-      },
-      {
-        test: /\.pug$/,
-        loader: 'pug-loader'
-      },
-      //BEM
-      // { 
-      //   test: /\.html$/,                
-      //   use: [
-      //     'html-loader',
-      //     {
-      //       loader: 'bemdecl-to-fs-loader',
-      //       options: { levels: [`libs/desktop`], extensions: ['scss', 'js'] }
-      //     },
-      //     'html2bemdecl-loader'
-      //   ]
-      // },
+      }, {
       //SCSS
-      {
         test: /\.scss$/,
         use: [
           'style-loader',
@@ -79,15 +56,21 @@ module.exports = {
             options: { sourceMap: true }
           }
         ]
-      }, 
+      }, {
+      //FONTS
+        test: /\.(png|jpg|gif|svg)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]'
+        }
+      }, {
       //IMG
-      {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'file-loader',
         options: {
           name: '[name].[ext]'
         }
-      },
+      }
     ]
   },
   plugins: [
@@ -101,16 +84,9 @@ module.exports = {
         {from: `${PATHS.src}/static`, to: ``},
       ]
     }),
-    ...PAGES.map(page => 
-    
-    new HtmlWebpackPlugin({
+    ...PAGES.map(page => new HtmlWebpackPlugin({
       template: `${PAGES_DIR}/${page}`,
       filename: `./${page.replace(/\.pug/,'.html')}`
-    })),
-    new HtmlWebpackPlugin({
-      template: `${PAGES_DIR}/index.pug`,
-      filename: './index.html',
-      inject: true
-    })
+    }))
   ]
 } 
